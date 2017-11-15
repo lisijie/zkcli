@@ -18,6 +18,8 @@ var (
     confFile string
     config struct {
         Addrs []string
+        User string
+        Password string
     }
 )
 
@@ -75,6 +77,9 @@ func initialize(ctx *cli.Context) error {
 
     zk.DefaultLogger = nullLogger{}
     conn, _, err = zk.Connect(config.Addrs, time.Second)
+    if config.User != "" && config.Password != "" {
+        conn.AddAuth("digest", []byte(config.User + ":" + config.Password))
+    }
     return err
 }
 
